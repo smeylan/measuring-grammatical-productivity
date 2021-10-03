@@ -75,9 +75,9 @@ model {
     pseudo.f1[i] <- eta1 * (n.parent1[i] - r.parent1[i] + N.parent1[i] - R.parent1[i])
 
     /* infer values of mu and nu from observed child production data */
-    mu.child1 ~ dbeta(a.child1+pseudo.r1[i],b.child1+pseudo.f1[i])
+    mu.child1[i] ~ dbeta(a.child1+pseudo.r1[i],b.child1+pseudo.f1[i])
 
-    r.child1[i] ~ dbin(mu.child1, n.child1[i]) 
+    r.child1[i] ~ dbin(mu.child1[i], n.child1[i]) 
     
     /* simulated child production data: encounter length(N.new) noun types with n.child[i] observations each */
     mu.child1.simulated = dbeta(a.child1+pseudo.r1[i], b.child1+pseudo.f1[i])
@@ -92,8 +92,8 @@ model {
     pseudo.f2[i] <- eta2 * (n.parent2[i] - r.parent2[i] + N.parent2[i] - R.parent2[i])
 
     /* infer values of mu and nu from observed child production data */
-    mu.child2 ~ dbeta(a.child2+pseudo.r2[i], b.child2+pseudo.f2[i])
-    r.child2[i] ~ dbin(mu.child2, n.child2[i]) 
+    mu.child2[i] ~ dbeta(a.child2+pseudo.r2[i], b.child2+pseudo.f2[i])
+    r.child2[i] ~ dbin(mu.child2[i], n.child2[i]) 
     
     /* simulated child production data: encounter length(N.new) noun types with n.child[i] observations each */
     mu.child2.simulated = dbeta(a.child2+pseudo.r2[i], b.child2+pseudo.f2[i])
