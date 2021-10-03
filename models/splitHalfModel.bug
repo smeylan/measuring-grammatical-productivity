@@ -25,7 +25,8 @@ model {
   b.child1 <- (1-mu0.child1)*nu.child1
   
   for(i in (phase1_endPart1+1):phase1_endPart3) {
-    r.parent1[i] ~ dbetabin(a.adult1,b.adult1,n.parent1[i])
+    mu.parent1[i] ~ dbeta(a.adult1,b.adult1)
+    r.parent1[i] ~ dbin(mu.parent1[i],n.parent1[i])
   }
 
   /* SECOND PHASE */
@@ -43,19 +44,22 @@ model {
   a.child2 <- mu0.child2*nu.child2
   b.child2 <- (1-mu0.child2)*nu.child2
   for(i in (phase2_endPart1+1):phase2_endPart3) {
-    r.parent2[i] ~ dbetabin(a.adult2,b.adult2,n.parent2[i])
+    mu.parent2[i] ~ dbeta(a.adult2,b.adult2)
+    r.parent2[i] ~ dbin(mu.parent2[i], n.parent2[i])
   }
   
   /* Imputation step: externally set a total number Q of det+n utterances experienced by the child in its lifetime, and a word-frequency distribution wordfreqs */
 
   /* FIRST PHASE */
   for(i in 1:phase1_endPart4) {
-    R.parent1[i] ~ dbetabin(a.adult1 + r.parent1[i],b.adult1 + n.parent1[i] - r.parent1[i],N.parent1[i]) /* N.parent1 is the number to be imputed  in the first phase*/
+    MU.parent1[i] ~ dbeta(a.adult1 + r.parent1[i],b.adult1 + n.parent1[i] - r.parent1[i])
+    R.parent1[i] ~ dbin(MU.parent1[i], N.parent1[i]) /* N.parent1 is the number to be imputed  in the first phase*/
   }
 
   /* SECOND PHASE */
   for(i in 1:phase2_endPart4) {
-    R.parent2[i] ~ dbetabin(a.adult2 + r.parent2[i],b.adult2 + n.parent2[i] - r.parent2[i],N.parent2[i]) /* N.parent2 is the number to be imputed in the second phase  */
+    MU.parent2[i] ~ dbeta(a.adult2 + r.parent2[i],b.adult2 + n.parent2[i] - r.parent2[i])
+    R.parent2[i] ~ dbin(MU.parent2[i], N.parent2[i]) /* N.parent2 is the number to be imputed in the second phase  */
   }
 
   /* downweighting factor on observed utterances (memory limitations of child & such).  Set to 1 for perfect memory */
