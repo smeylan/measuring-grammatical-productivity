@@ -80,9 +80,9 @@ model {
     r.child1[i] ~ dbin(mu.child1[i], n.child1[i]) 
     
     /* simulated child production data: encounter length(N.new) noun types with n.child[i] observations each */
-    mu.child1.simulated = dbeta(a.child1+pseudo.r1[i], b.child1+pseudo.f1[i])
+    mu.child1.simulated[i] ~ dbeta(a.child1+pseudo.r1[i], b.child1+pseudo.f1[i])
 
-    r.child.simulated1[i] ~ dbin(mu.child1.simulated,n.child1[i]) 
+    r.child.simulated1[i] ~ dbin(mu.child1.simulated[i],n.child1[i]) 
   }
 
   /* SECOND PHASE */  
@@ -96,8 +96,8 @@ model {
     r.child2[i] ~ dbin(mu.child2[i], n.child2[i]) 
     
     /* simulated child production data: encounter length(N.new) noun types with n.child[i] observations each */
-    mu.child2.simulated = dbeta(a.child2+pseudo.r2[i], b.child2+pseudo.f2[i])
-    r.child.simulated2[i] ~ dbin(mu.child2.simulated, n.child2[i]) 
+    mu.child2.simulated[i] ~ dbeta(a.child2+pseudo.r2[i], b.child2+pseudo.f2[i])
+    r.child.simulated2[i] ~ dbin(mu.child2.simulated[i], n.child2[i]) 
     
   }
 }
