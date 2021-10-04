@@ -25,7 +25,7 @@ model {
   b.child1 <- (1-mu0.child1)*nu.child1
   
   for(i in (phase1_endPart1+1):phase1_endPart3) {
-    mu.parent1[i] ~ dbeta(a.adult1, b.adult1)
+    mu.parent1[i] ~ dbeta(a.adult1, b.adult1) T(0.001,0.999) 
     r.parent1[i] ~ dbin(mu.parent1[i],n.parent1[i])
   }
 
@@ -44,7 +44,7 @@ model {
   a.child2 <- mu0.child2*nu.child2
   b.child2 <- (1-mu0.child2)*nu.child2
   for(i in (phase2_endPart1+1):phase2_endPart3) {
-    mu.parent2[i] ~ dbeta(a.adult2, b.adult2)
+    mu.parent2[i] ~ dbeta(a.adult2, b.adult2) T(0.001,0.999)
     r.parent2[i] ~ dbin(mu.parent2[i], n.parent2[i])
   }
   
@@ -52,14 +52,14 @@ model {
 
   /* FIRST PHASE */
   for(i in 1:phase1_endPart4) {
-    MU.parent1[i] ~ dbeta(a.adult1 + r.parent1[i], b.adult1 + n.parent1[i] - r.parent1[i])
+    MU.parent1[i] ~ dbeta(a.adult1 + r.parent1[i], b.adult1 + n.parent1[i] - r.parent1[i])T(0.001,0.999)
     R.parent1[i] ~ dbin(MU.parent1[i], N.parent1[i]) /* N.parent1 is the number to be imputed  in the first phase*/
   }
 
   /* SECOND PHASE */
-  for(i in 1:phase2_endPart4) {
-    MU.parent2[i] ~ dbeta(a.adult2 + r.parent2[i], b.adult2 + n.parent2[i] - r.parent2[i])
-    R.parent2[i] ~ dbin(MU.parent2[i], N.parent2[i]) /* N.parent2 is the number to be imputed in the second phase  */
+  for(j in 1:phase2_endPart4) {
+    MU.parent2[j] ~ dbeta(a.adult2 + r.parent2[j], b.adult2 + n.parent2[j] - r.parent2[j])T(0.001,0.999)
+    R.parent2[j] ~ dbin(MU.parent2[j], N.parent2[j]) /* N.parent2 is the number to be imputed in the second phase  */
   }
 
   /* downweighting factor on observed utterances (memory limitations of child & such).  Set to 1 for perfect memory */
@@ -69,35 +69,35 @@ model {
   /* OBSERVED CHILD DATA */
   
   /* FIRST PHASE */  
-  for(i in 1:phase1_endPart2) {
+  for(k in 1:phase1_endPart2) {
     /* pseudocounts */
-    pseudo.r1[i] <- eta1 * (r.parent1[i] + R.parent1[i])
-    pseudo.f1[i] <- eta1 * (n.parent1[i] - r.parent1[i] + N.parent1[i] - R.parent1[i])
+    pseudo.r1[k] <- eta1 * (r.parent1[k] + R.parent1[k])
+    pseudo.f1[k] <- eta1 * (n.parent1[k] - r.parent1[k] + N.parent1[k] - R.parent1[k])
 
     /* infer values of mu and nu from observed child production data */
-    mu.child1[i] ~ dbeta(a.child1+pseudo.r1[i],b.child1+pseudo.f1[i])
+    mu.child1[k] ~ dbeta(a.child1+pseudo.r1[k],b.child1+pseudo.f1[k]) T(0.001,0.999)
 
-    r.child1[i] ~ dbin(mu.child1[i], n.child1[i]) 
+    r.child1[k] ~ dbin(mu.child1[k], n.child1[k]) 
     
-    /* simulated child production data: encounter length(N.new) noun types with n.child[i] observations each */
-    mu.child1.simulated[i] ~ dbeta(a.child1+pseudo.r1[i], b.child1+pseudo.f1[i])
+    /* simulated child production data: encounter length(N.new) noun types with n.child[k] observations each */
+    mu.child1.simulated[k] ~ dbeta(a.child1+pseudo.r1[k], b.child1+pseudo.f1[k]) T(0.001,0.999)
 
-    r.child.simulated1[i] ~ dbin(mu.child1.simulated[i],n.child1[i]) 
+    r.child.simulated1[k] ~ dbin(mu.child1.simulated[k],n.child1[k]) 
   }
 
   /* SECOND PHASE */  
-  for(i in 1:phase2_endPart2) {
+  for(m in 1:phase2_endPart2) {
     /* pseudocounts */
-    pseudo.r2[i] <- eta2 * (r.parent2[i] + R.parent2[i])
-    pseudo.f2[i] <- eta2 * (n.parent2[i] - r.parent2[i] + N.parent2[i] - R.parent2[i])
+    pseudo.r2[m] <- eta2 * (r.parent2[m] + R.parent2[m])
+    pseudo.f2[m] <- eta2 * (n.parent2[m] - r.parent2[m] + N.parent2[m] - R.parent2[m])
 
     /* infer values of mu and nu from observed child production data */
-    mu.child2[i] ~ dbeta(a.child2+pseudo.r2[i], b.child2+pseudo.f2[i])
-    r.child2[i] ~ dbin(mu.child2[i], n.child2[i]) 
+    mu.child2[m] ~ dbeta(a.child2+pseudo.r2[m], b.child2+pseudo.f2[m]) T(0.001,0.999)
+    r.child2[m] ~ dbin(mu.child2[m], n.child2[m]) 
     
-    /* simulated child production data: encounter length(N.new) noun types with n.child[i] observations each */
-    mu.child2.simulated[i] ~ dbeta(a.child2+pseudo.r2[i], b.child2+pseudo.f2[i])
-    r.child.simulated2[i] ~ dbin(mu.child2.simulated[i], n.child2[i]) 
+    /* simulated child production data: encounter length(N.new) noun types with n.child[m] observations each */
+    mu.child2.simulated[m] ~ dbeta(a.child2+pseudo.r2[m], b.child2+pseudo.f2[m]) T(0.001,0.999)
+    r.child.simulated2[m] ~ dbin(mu.child2.simulated[m], n.child2[m]) 
     
   }
 }
