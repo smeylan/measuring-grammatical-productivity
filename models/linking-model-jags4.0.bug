@@ -13,14 +13,14 @@ model {
 
 
   /* operating on all noun types observed for either adult or child */
-  for(i in 1:length(N.observed[,2])) {
+  for(i in 1:length(n.observed[,2])) {
     /* compute some sufficient statistics */
     pseudo.r[i] <- eta * r.observed[i,1]
-    pseudo.f[i] <- eta * (N.observed[i,1]-r.observed[i,1])
+    pseudo.f[i] <- eta * (n.observed[i,1]-r.observed[i,1])
 
     /* infer values of mu and nu from observed child production data */
     mu.this.noun[i] ~ dbeta(a+pseudo.r[i],b+pseudo.f[i])
-    r.observed[i,2] ~ dbin(mu.this.noun[i],N.observed[i,2])
+    r.observed[i,2] ~ dbin(mu.this.noun[i],n.observed[i,2])
 
   }
 
