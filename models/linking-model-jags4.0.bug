@@ -19,15 +19,9 @@ model {
     pseudo.f[i] <- eta * (n.observed[i,1]-r.observed[i,1])
 
     /* infer values of mu and nu from observed child production data */
-    mu.this.noun[i] ~ dbeta(a+pseudo.r[i],b+pseudo.f[i])
+    mu.this.noun[i] ~ dbeta(a+pseudo.r[i],b+pseudo.f[i])T(0.0001,0.9999)
     r.observed[i,2] ~ dbin(mu.this.noun[i],n.observed[i,2])
 
   }
 
 }
-
-
-
-
-
-
